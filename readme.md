@@ -1,6 +1,6 @@
-#H2 Completed:
-#H3 C++ 
+## Completed:
+### C++ 
 Day1
-#H3 Python
+### Python
 Day1
 
