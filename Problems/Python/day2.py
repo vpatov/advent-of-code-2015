@@ -9,9 +9,36 @@ A present with dimensions 1x1x10 requires 2*1 + 2*10 + 2*10 = 42 square feet of 
 import time
 start_time = time.time()
 
+f = open('../Input/day2.txt')
+tot_sum = 0
+ribbon = 0
+for line in f:
+	parts = line.strip().split('x')
+	l,w,h = int(parts[0]),int(parts[1]),int(parts[2])
+	product = (2 * l*w) + (2 * w*h) + (2 * h*l)
+	
+	# Part I
+	tot_sum += product
+	min_num = min(l*w, w*h, h*l)
+	tot_sum += min_num
+	
+	#Part II
+	
+	max_num = max(l,w,h)
+	if max_num == l:
+		ribbon += w + w + h + h
+	elif max_num == w:
+		ribbon += l + l + h + h
+	else:
+		ribbon += l + l + w + w
+		
+	ribbon += l * w * h
+	
+print 'Part I', tot_sum
+print 'Part II', ribbon
 
-
+f.close()
 
 
 total_time = time.time() - start_time
-print "Program Execution Time:", end_time, "seconds."
+print "Program Execution Time:", total_time, "seconds."

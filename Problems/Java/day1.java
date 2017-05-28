@@ -11,7 +11,7 @@
 import java.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-public class Day1{
+public class day1{
 
 	public static void main(String[]args){
 		long start_time = System.currentTimeMillis();
