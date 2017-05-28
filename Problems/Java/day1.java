@@ -8,14 +8,34 @@
 ))) and )())()) both result in floor -3.
  (()) and ()() both result in floor 0. ((( and (()(()( both result in floor 3. ))((((( also results in floor 3. ()) and ))( both result in floor -1 (the first basement level). ))) and )())()) both result in floor -3. To what floor do the instructions take Santa?
 */
+import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 public class Day1{
 
 	public static void main(String[]args){
 		long start_time = System.currentTimeMillis();
 
+		try{
+			Scanner sc = new Scanner(new File("../Input/day1.txt"));
+			String input = sc.next();
+			int floor = 0;
+			for (int i = 0; i < input.length(); i++){
+				if (input.charAt(i) == '('){
+					floor++;
+				}
+				else floor--;
+			}
+			System.out.println(floor);
+			
+		}
+		catch (FileNotFoundException f){
+			
+		}
+		
+		
 		long end_time = System.currentTimeMillis();
-
-	System.out.println("\nProgram Execution Time: " + (end_time - start_time) + "seconds.");
+		System.out.println("\nProgram Execution Time: " + (end_time - start_time) + "seconds.");
 
 	}
 
