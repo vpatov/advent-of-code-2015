@@ -7,10 +7,73 @@
  > delivers presents to 2 houses: one at the starting location, and one to the east. ^>v< delivers presents to 4 houses in a square, including twice to the house at his starting/ending location. ^v^v^v^v^v delivers a bunch of presents to some very lucky children at only 2 houses.
 */
 
-	
-void problem_main(){
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <time.h>
+#include <map>
+#include <set>
 
+using namespace std;
+
+
+void problem_main(){
+	// keep track of the places visited
+	map<pair<int,int>,int> visited1 = *new map<pair<int,int>,int>;
+	map<pair<int,int>,int> visited2 = *new map<pair<int,int>,int>;
+	//part I coordinates 
+	int x = 0, y = 0;
+	//Part II robot santa coordinates, and santa coordinates
+	int rx = 0, ry = 0, sx = 0, sy = 0;
+	//when true, it is the robots turn
+	bool robos_turn = false;
+	
+	ifstream infile("../Input/day3.txt");
+	char ch;
+	if (!infile.is_open()){
+		cout << "file not found" << endl;
+	}
+	
+	visited1.insert(make_pair(make_pair(x,y),0));
+	//they both start at the same place, either sx or rx will do.
+	visited2.insert(make_pair(make_pair(sx,sy),0));
+	while (infile >> ch) {	
+		switch (ch) {
+			case '<': robos_turn?rx--:sx--; x--; break;
+			case '>': robos_turn?rx++:sx++; x++; break;
+			case 'v': robos_turn?ry--:sy--; y--; break;
+			case '^': robos_turn?ry++:sy++; y++; break;
+			default: ;
+		}
+		pair<int,int> cur1 = make_pair(x,y);
+		pair<int,int> cur2 = robos_turn?make_pair(rx,ry):make_pair(sx,sy);
+		
+		map<pair<int,int>,int>::iterator it1 = visited1.find(cur1);
+		if (it1 != visited1.end()){
+			it1->second++;
+		}
+		else {		
+			visited1.insert(make_pair(cur1,0));
+		}
+		
+		map<pair<int,int>,int>::iterator it2 = visited2.find(cur2);
+		if (it2 != visited2.end()){
+			it2->second++;
+		}
+		else {		
+			visited2.insert(make_pair(cur2,0));
+		}
+		
+		robos_turn = !robos_turn;
+	}
+	cout << "Part I" << endl;
+	cout << visited1.size() << endl;
+	cout << "Part II" << endl;
+	cout << visited2.size() << endl;
+	
 }
+
+
 	
 int main(){
 	std::cout<<"\n";
