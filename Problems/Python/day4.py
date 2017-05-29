@@ -7,11 +7,34 @@ If your secret key is pqrstuv, the lowest number it combines with to make an MD5
 """
 
 import time
+import md5
 start_time = time.time()
 
-
+input_ = "iwrupvqb"
+i = 0
+while(True):
+	m = md5.new()
+	m.update(input_ + str(i))
+	hash = m.hexdigest()
+	if hash[0:5] == '00000':
+		print "Part I"
+		print i
+		break
+	i += 1
+	
+i = 0
+while(True):
+	m = md5.new()
+	m.update(input_ + str(i))
+	hash = m.hexdigest()
+	if hash[0:6] == '000000':
+		print "Part II"
+		print i
+		break
+	i += 1
+	
 
 
 
 total_time = time.time() - start_time
-print "Program Execution Time:", end_time, "seconds."
+print "Program Execution Time:", total_time, "seconds."
