@@ -16,9 +16,80 @@ dvszwmarrgswjxmb is naughty because it contains only one vowel.
 import time
 start_time = time.time()
 
+strings = open('../Input/day5.txt').read().split('\n')
+vowels = set(['a','e','i','o','u'])
+forbidden = set(['ab','cd','pq','xy'])
+
+# Part I
+# cond 1: must contain at least three vowels 
+# cond 2: must contain at least one letter that appears twice in a row
+# cond 3: must not contan any of the forbidden strings
+
+def is_nice1(string):
+	count_vowel = 0
+	for ch in string:
+		if ch in vowels:
+			count_vowel += 1
+	if count_vowel < 3:
+		return False
+	cond2 = False
+	for i in range(len(string) - 1):
+		if (string[i] == string[i+1]):
+			cond2 = True
+			break
+	if (not cond2):
+		return False
+	for substr in forbidden:
+		if substr in string:
+			return False
+	return True
 
 
+# Part II
+# cond 1: It contains a pair of any two letters that appears at least twice 
+# in the string without overlapping, like xyxy (xy) or aabcdefgaa (aa), 
+# but not like aaa (aa, but it overlaps).
+# cond2: It contains at least one letter which repeats with exactly one 
+# letter between them, like xyx, abcdefeghi (efe), or even aaa.
+def is_nice2(string):
+	
+	cond1 = False
+	first_pair = string[0:2]
+	pairs = [first_pair]
+	for i in range(2,len(string) + 1):
+		pair = string[i-1:i+1]
+		j = len(pairs) - 2
+		while (j >= 0):
+			if pairs[j] == pair:
+				cond1 = True
+				break
+			j -= 1
+
+		pairs.append(pair)
+	if not cond1:
+		return False
+
+
+	cond2 = False
+	for i in range(0,len(string) - 2):
+		if (string[i] == string[i+2]):
+			cond2 = True
+			break
+	return cond2
+
+print "true:",is_nice2("sxxpdohxleqmqhhx")
+print "true:",is_nice2("qjhvhtzxzqqjkmpb")
+print "true:",is_nice2("aaaabrefgtyh")
+print "false:",is_nice2("aaa")
+print 'false:',is_nice2("ieodomkazucvgmuy")
+print 'false:',is_nice2("vmkonztwnfgssdog")
+print 'false:',is_nice2("dfonzdicxxhzxkrx")
+
+print "Part I"
+print len(filter(is_nice1,strings))
+print "Part II"
+print len(filter(is_nice2,strings))
 
 
 total_time = time.time() - start_time
-print "Program Execution Time:", end_time, "seconds."
+print "Program Execution Time:", total_time, "seconds."
