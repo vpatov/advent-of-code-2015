@@ -56,7 +56,7 @@ def is_nice2(string):
 	cond1 = False
 	first_pair = string[0:2]
 	pairs = [first_pair]
-	for i in range(2,len(string) + 1):
+	for i in range(2,len(string)):
 		pair = string[i-1:i+1]
 		j = len(pairs) - 2
 		while (j >= 0):
@@ -76,14 +76,6 @@ def is_nice2(string):
 			cond2 = True
 			break
 	return cond2
-
-print "true:",is_nice2("sxxpdohxleqmqhhx")
-print "true:",is_nice2("qjhvhtzxzqqjkmpb")
-print "true:",is_nice2("aaaabrefgtyh")
-print "false:",is_nice2("aaa")
-print 'false:',is_nice2("ieodomkazucvgmuy")
-print 'false:',is_nice2("vmkonztwnfgssdog")
-print 'false:',is_nice2("dfonzdicxxhzxkrx")
 
 print "Part I"
 print len(filter(is_nice1,strings))

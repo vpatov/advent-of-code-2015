@@ -4,9 +4,9 @@ I started programming the advent of code challenges back in 2015, got up to arou
 ### C++ 
 Day1-Day4
 ### Python
-Day1-Day5
+Day1-Day6
 ### Java
 Day1-Day3
 ### Go
-Day1-Day3
+Day1-Day5
 
