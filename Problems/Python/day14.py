@@ -9,9 +9,43 @@ Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.
 import time
 start_time = time.time()
 
+fly_time = 2503
+data = open('../Input/day14.txt','r').read().split('\n')
+reindeers = dict()
+for line in data:
+	parts = line.split()
+	name,speed,flight_time,rest_time = parts[0],int(parts[3]),int(parts[6]),int(parts[-2])
+	reindeers[name] = {'speed':speed,'flight_time':flight_time,'rest_time':rest_time}
 
+positions = {deer:0 for deer in reindeers}
+rest_left = {deer:0 for deer in reindeers}
+flight_left = {deer:stats['flight_time'] for deer,stats in reindeers.iteritems()}
+points = {deer:0 for deer in reindeers}
 
+while (fly_time > 0):
+	for deer in reindeers:
+		if (rest_left[deer]):
+			rest_left[deer] -= 1
+			if (not rest_left[deer]):
+				flight_left[deer] = reindeers[deer]['flight_time']
+			continue
+		if (flight_left[deer]):
+			positions[deer] += reindeers[deer]['speed']
+			flight_left[deer] -= 1
+			if (not flight_left[deer]):
+				rest_left[deer] = reindeers[deer]['rest_time']
+			continue
+	# we must wait for all of them to move before we see who is in the lead
+	for deer in reindeers:
+		if (positions[deer] == max(positions.values())):
+			points[deer] += 1
+	fly_time -= 1
 
+print 'Part I'
+print max(positions.values())
+print 'Part II'
+print max(points.values())
 
 total_time = time.time() - start_time
 print "Program Execution Time:", total_time, "seconds."
+ 

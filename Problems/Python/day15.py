@@ -19,9 +19,106 @@ A texture of 44*3 + 56*-1 = 76
 import time
 start_time = time.time()
 
+# this is a constraint optimization problem. it is not linear due to its multiplicative aspect, and thus
+# is made more complex by this. However, thankfully the solution space is fairly small (171700), and we 
+# can just brute force this.
+
+data = open('../Input/day15.txt').read().split('\n')
+ingredients = dict()
+#Chocolate: capacity 0, durability 0, flavor -2, texture 2, calories 8
+for line in data:
+	parts = line.split()
+	# the [:-1] gets rid of the comma
+	name,capacity,durability,flavor,texture,calories = (
+		parts[0][:-1].lower(),
+		int(parts[2][:-1]),
+		int(parts[4][:-1]),
+		int(parts[6][:-1]),
+		int(parts[8][:-1]),
+		int(parts[10])
+	)
+
+	ingredients[name] = {
+		'capacity':capacity,
+		'durability':durability,
+		'flavor':flavor,
+		'texture':texture,
+		'calories':calories
+	}
+
+def cookie_score1(sugar,sprinkles,candy,chocolate):
+
+	qualities = {'capacity':0,'durability':0,'flavor':0,'texture':0}
+	amounts = {'sugar':sugar,'sprinkles':sprinkles,'candy':candy,'chocolate':chocolate}
+	for quality in qualities:
+		for ingredient in ingredients:
+			qualities[quality] += ingredients[ingredient][quality]*amounts[ingredient]
+		if qualities[quality] < 0:
+				return 0
+
+	score = 1
+	for value in qualities.values():
+		score *= value
+	return score
+
+def cookie_score2(sugar,sprinkles,candy,chocolate):
+
+	qualities = {'capacity':0,'durability':0,'flavor':0,'texture':0,'calories':0}
+	amounts = {'sugar':sugar,'sprinkles':sprinkles,'candy':candy,'chocolate':chocolate}
+	for quality in qualities:
+		for ingredient in ingredients:
+			qualities[quality] += ingredients[ingredient][quality]*amounts[ingredient]
+		if qualities[quality] < 0:
+				return 0
+
+	if (qualities['calories'] != 500):
+		return 0
+	score = 1
+	for key in qualities:
+		if key != 'calories':
+			score *= qualities[key]
+	return score
 
 
+print 'Part I'
+best_score1 = 0
+i = 100
+while (i >= 0):
+	j = 100 - i
+	while (j >= 0):
+		k = 100 - i - j
+		while(k >= 0):
+			l = 100 - i - j - k
+			while (l >= 0):
+				score1 = cookie_score1(i,j,k,l)
+				if score1 > best_score1:
+					best_score1 = score1
 
+				l -= 1
+			k -= 1
+		j -= 1
+	i -= 1
+print best_score1
+
+print 'Part II'
+best_score2 = 0
+i = 100
+while (i >= 0):
+	j = 100 - i
+	while (j >= 0):
+		k = 100 - i - j
+		while(k >= 0):
+			l = 100 - i - j - k
+			while (l >= 0):
+				score2 = cookie_score2(i,j,k,l)
+				if score2 > best_score2:
+					best_score2 = score2
+				
+				l -= 1
+			k -= 1
+		j -= 1
+	i -= 1
+print best_score2
 
 total_time = time.time() - start_time
 print "Program Execution Time:", total_time, "seconds."

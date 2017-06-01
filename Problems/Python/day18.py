@@ -54,9 +54,86 @@ After 4 steps:
 import time
 start_time = time.time()
 
+grid = []
+data = open('../Input/day18.txt','r').read().split('\n')
+for line in data:
+	row = [1 if i == '#' else 0 for i in line]
+	grid.append(row)
+
+neighbors = lambda i,j: [(i-1,j),(i-1,j-1),(i-1,j+1),
+				(i,j-1),(i,j+1), 
+				(i+1,j),(i+1,j-1),(i+1,j+1) 
+			]
+
+def process_grid1(grid):
+	new_grid = [[0 for i in range(len(grid))] for j in range(len(grid))]
+	for i in range(0,len(grid)):
+		for j in range(0,len(grid[i])):
+			count_on = 0
+			for x,y in neighbors(i,j):
+				try:
+					if x < 0 or y < 0:
+						continue
+					light = grid[x][y]
+					if light == 1:
+						count_on += 1
+				except Exception as e:
+					pass
+
+			if grid[i][j]:
+				if count_on in [2,3]:
+					new_grid[i][j] = 1
+			else:
+				if count_on == 3:
+					new_grid[i][j] = 1
+	return new_grid
+
+def process_grid2(grid):
+	new_grid = [[0 for i in range(len(grid))] for j in range(len(grid))]
+	for i in range(0,len(grid)):
+		for j in range(0,len(grid[i])):
+			count_on = 0
+			for x,y in neighbors(i,j):
+				try:
+					if x < 0 or y < 0:
+						continue
+					light = grid[x][y]
+					if light == 1:
+						count_on += 1
+				except Exception as e:
+					pass
+
+			if grid[i][j]:
+				if count_on in [2,3]:
+					new_grid[i][j] = 1
+			else:
+				if count_on == 3:
+					new_grid[i][j] = 1
+	new_grid[0][0] = 1
+	new_grid[0][len(new_grid)-1] = 1
+	new_grid[len(new_grid) - 1][0] = 1
+	new_grid[len(new_grid) - 1][len(new_grid) - 1] = 1
+
+	return new_grid
 
 
+print 'Part I'
+for _ in range(100):
+	grid = process_grid1(grid)
+print sum([sum(row) for row in grid])
 
+# reset the grid
+grid = []
+data = open('../Input/day18.txt','r').read().split('\n')
+for line in data:
+	row = [1 if i == '#' else 0 for i in line]
+	grid.append(row)
+
+	
+print 'Part II'
+for _ in range(100):
+	grid = process_grid2(grid)
+print sum([sum(row) for row in grid])
 
 total_time = time.time() - start_time
 print "Program Execution Time:", total_time, "seconds."
