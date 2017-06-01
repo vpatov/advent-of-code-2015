@@ -94,11 +94,5 @@ print tot_char_length - tot_count_mem
 print "Part II"
 print tot_encode_length - tot_char_length
 
-print(encode('"abc"'))
-
-
-
-
-
 total_time = time.time() - start_time
 print "Program Execution Time:", total_time, "seconds."

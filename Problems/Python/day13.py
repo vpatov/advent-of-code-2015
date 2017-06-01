@@ -21,11 +21,44 @@ Carol       Alice
 """
 
 import time
+from itertools import permutations as permute
 start_time = time.time()
 
 
+# Alice would gain 54 happiness units by sitting next to Bob.
+# Alice would lose 81 happiness units by sitting next to Carol.
+data = open('../Input/day13.txt','r').read().split('\n')
+happiness = dict()
+for line in data:
+	parts = line.split()
+	name1,pos,cost,name2 = parts[0],parts[2]=='gain',int(parts[3]),parts[-1][:-1]
+	if name1 in happiness:
+		happiness[name1][name2] = cost if pos else -cost
+	else:
+		happiness[name1] = {name2: cost if pos else -cost}
+
+# note that the happiness relation is not commutative
+def calc_happiness(arrangement):
+	tot_happiness = 0
+	for i in range(0,len(arrangement) - 1):
+		tot_happiness += happiness[arrangement[i]][arrangement[i+1]]
+		tot_happiness += happiness[arrangement[i+1]][arrangement[i]]
+	tot_happiness += happiness[arrangement[0]][arrangement[-1]]
+	tot_happiness += happiness[arrangement[-1]][arrangement[0]]
+	return tot_happiness
 
 
+print 'Part I'
+print max([calc_happiness(arrangement) for arrangement in permute(happiness.keys())])
+
+print 'Part II'
+myname = 'Vasia'
+happiness[myname] = {key: 0 for (key,value) in happiness['Alice'].iteritems()}
+happiness[myname]['Alice'] = 0
+for person in happiness:
+	if person != myname:
+		happiness[person][myname] = 0
+print max([calc_happiness(arrangement) for arrangement in permute(happiness.keys())])
 
 total_time = time.time() - start_time
-print "Program Execution Time:", end_time, "seconds."
+print "Program Execution Time:", total_time, "seconds."

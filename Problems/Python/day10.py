@@ -11,10 +11,29 @@
 
 import time
 start_time = time.time()
+input_ = '1113122113'
 
+def look_and_say(num):
+	new_num = ''
+	prev = num[0]
+	count = 1
+	for i in range(1,len(num)):
+		if (num[i] == prev):
+			count += 1
+		else:
+			new_num += str(count) + prev
+			prev = num[i]
+			count = 1
+	new_num += str(count) + prev
+	return new_num
 
+for i in range(0,40):
+	input_ = look_and_say(input_)
+
+print input_
+print len(input_)
 
 
 
 total_time = time.time() - start_time
-print "Program Execution Time:", end_time, "seconds."
+print "Program Execution Time:", total_time, "seconds."

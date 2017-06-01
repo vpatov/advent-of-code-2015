@@ -14,4 +14,4 @@ start_time = time.time()
 
 
 total_time = time.time() - start_time
-print "Program Execution Time:", end_time, "seconds."
+print "Program Execution Time:", total_time, "seconds."
