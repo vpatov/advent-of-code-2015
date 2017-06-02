@@ -35,6 +35,87 @@ The player deals 5-2 = 3 damage; the boss goes down to 0 hit points.
 import time
 start_time = time.time()
 
+boss_stats = {"hp":100,"damage":8,"armor":2}
+your_stats = {"hp":100,"damage":0,"armor":0}
+
+weapons_shop = dict()
+armor_shop = dict()
+rings_shop = dict()
+data = open('../Input/day21.txt','r').read().split('\n')
+cur = None
+for line in data:
+	if len(line) < 1:
+		continue
+	parts = line.split()
+	if parts[0][:-1] == 'Weapons':
+		cur = weapons_shop
+		continue
+	elif parts[0][:-1] == 'Armor':
+		cur = armor_shop
+		continue
+	elif parts[0][:-1] == 'Rings':
+		cur = rings_shop
+		continue
+	name,cost,damage,armor = parts[0],int(parts[-3]),int(parts[-2]),int(parts[-1])
+	if cur == rings_shop:
+		name = parts[0] + ' ' + parts[1]
+
+	cur[name] = {'cost':cost,'damage':damage,'armor':armor}
+
+#Add two zero cost no effect rings to the shop to make the case of no rings easier to represent
+armor_shop['zero_armor'] = {'cost':0,'damage':0,'armor':0}
+rings_shop['zero_ring1'] = {'cost':0,'damage':0,'armor':0}
+rings_shop['zero_ring2'] = {'cost':0,'damage':0,'armor':0}
+
+# return True if you win
+def fight(boss,you):
+	boss_hp,your_hp = boss['hp'],you['hp']
+	boss_dmg,your_dmg = boss['damage'],you['damage']
+	boss_armr,your_armr = boss['armor'],you['armor']
+
+	your_turn = True
+	while (True):
+		if your_turn:
+			boss_hp -= max(1,your_dmg - boss_armr)
+			if boss_hp <= 0:
+				return True
+		else:
+			your_hp -= max(1,boss_dmg - your_armr)
+			if your_hp <= 0:
+				return False
+		
+		your_turn = not your_turn
+
+print weapons_shop
+print armor_shop
+print rings_shop
+
+min_cost = float('inf')
+max_cost = 0
+for weapon in weapons_shop.values():
+	for armor in armor_shop.values():
+		for ring1 in rings_shop:
+			for ring2 in rings_shop:
+				if ring1 == ring2:
+					continue
+				your_stats['damage'] = weapon['damage'] + rings_shop[ring1]['damage'] + rings_shop[ring2]['damage']
+				your_stats['armor'] = armor['armor'] + rings_shop[ring1]['armor'] + rings_shop[ring2]['armor']
+				cost = weapon['cost'] + armor['cost'] + rings_shop[ring1]['cost'] + rings_shop[ring2]['cost']
+
+				win = fight(boss_stats,your_stats)
+				if win:
+					if cost < min_cost:
+						min_cost = cost
+				else:
+					if cost > max_cost:
+						max_cost = cost
+
+
+print 'Part I'
+print min_cost
+print 'Part II'
+print max_cost
+
 
 
 

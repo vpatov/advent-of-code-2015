@@ -95,9 +95,106 @@ Poison deals 3 damage. This kills the boss, and the player wins.
 """
 
 import time
+import itertools
 start_time = time.time()
 
+boss_stats = {'hp':58,'damage':9}
+your_stats = {'hp':50,'mana':500}
+spell_costs = {'Magic Missile':53,'Drain':73,'Shield':113,'Poison':173,'Recharge':229}
+minimum_mana = 53
 
+def fight(boss_stats,your_stats,spell_seq):
+	boss_hp,your_hp = boss_stats['hp'],your_stats['hp']
+	boss_dmg = boss_stats['damage']
+	your_mana = your_stats['mana']
+	your_armor = 0
+
+	current_spell = 0
+	poison_ticker = 0
+	shield_ticker = 0
+	recharge_ticker = 0
+	your_turn = True
+	while(True):
+		if your_turn:
+			print 'Player turn'
+		else: print 'Boss turn'
+		print 'boss:',boss_hp,'you:',your_hp
+		#poison
+		if poison_ticker:
+			boss_hp -= 3
+			poison_ticker -= 1
+		if boss_hp <= 0:
+			return True
+
+		#shield
+		if shield_ticker:
+			shield_ticker -= 1
+			if shield_ticker == 0:
+				your_armor = 0
+
+		#recharge
+		if recharge_ticker:
+			recharge_ticker -= 1
+			your_mana += 101
+
+		if your_turn:
+			if your_mana < minimum_mana:
+				return False
+			if current_spell == len(spell_seq):
+				raise Exception("need to increase size of spell_seq")
+
+			spell = spell_seq[current_spell]
+			current_spell += 1
+			print 'casting',spell
+			your_mana -= spell_costs[spell]
+			if spell == 'Magic Missile':
+				boss_hp -= 4
+
+			elif spell == 'Drain':
+				boss_hp -= 2
+				your_hp += 2
+
+			elif spell == 'Shield':
+				shield_ticker = 6
+				your_armor = 7
+
+			elif spell == 'Recharge':
+				recharge_ticker = 5
+
+			elif spell == 'Poison':
+				poison_ticker = 6
+
+			if boss_hp <= 0:
+				return True
+		else:
+			your_hp -= max(1,boss_dmg - your_armor)
+			if your_hp <= 0:
+				return False
+		
+		your_turn = not your_turn
+
+		print ''
+
+
+# For example, suppose the player has 10 hit points and 250 mana,
+ # and that the boss has 13 hit points and 8 damage:
+tb = {'hp':13,'damage':8}
+ty = {'hp':10,'mana':250}
+
+print fight(tb,ty,['Poison','Magic Missile'])
+
+valid_seqs = []
+seqs = itertools.product(spell_costs,repeat=8)
+i = 0
+while(i < len(spell_costs) ** 8):
+	for j in range(len(seq)):
+		if seq[j] == 'Poison':
+			if 'Poison' in seq[j+1:j+3]:
+				pass
+				#### TODO
+				#### Skip the spell sequences that have poison come too soon.
+				#### This is similar to what you did in a previous problem
+				#### you will have to skip based on where the second poison occurs.
 
 
 
