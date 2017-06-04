@@ -17,6 +17,53 @@ inc a
 import time
 start_time = time.time()
 
+code = open('../Input/day23.txt','r').read().split('\n')
+
+
+pc = 0
+registers = {'a':0,'b':0}
+instructions = {
+	'hlf':lambda r,_: registers[r]/2,
+	'tpl':lambda r,_: 3*registers[r],
+	'inc':lambda r,_: registers[r] + 1,
+	'jmp':lambda _,a: pc + a-1,
+	'jie':lambda r,a: pc + a-1 if (registers[r] % 2 == 0) else pc,
+	'jio':lambda r,a: pc + a-1 if (registers[r] == 1) else pc
+}
+
+def process_instruction(instruction):
+	global pc
+	inst = instruction.split()
+	opcode = inst[0]
+	a,r = 1,'a'
+	if len(inst) == 3:
+		r = inst[1][:-1]
+		a = inst[2]
+	elif opcode == 'jmp':
+		a = inst[1]
+	else:
+		r = inst[1]
+
+	if opcode in ['jmp','jie','jio']:
+		pc = instructions[opcode](r,int(a))
+	else:
+		registers[r] = instructions[opcode](r,int(a))
+
+	pc += 1
+
+print 'Part I'
+while(pc < len(code)):
+	process_instruction(code[pc])
+print registers['b']
+
+print 'Part II'
+pc = 0
+registers = {'a':1,'b':0}
+while(pc < len(code)):
+	process_instruction(code[pc])
+print registers['b']
+
+
 
 
 

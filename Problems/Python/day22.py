@@ -103,11 +103,12 @@ your_stats = {'hp':50,'mana':500}
 spell_costs = {'Magic Missile':53,'Drain':73,'Shield':113,'Poison':173,'Recharge':229}
 minimum_mana = 53
 
-def fight(boss_stats,your_stats,spell_seq):
+def fight(boss_stats,your_stats,spell_seq,part2):
 	boss_hp,your_hp = boss_stats['hp'],your_stats['hp']
 	boss_dmg = boss_stats['damage']
 	your_mana = your_stats['mana']
 	your_armor = 0
+	mana_spent = 0
 
 	current_spell = 0
 	poison_ticker = 0
@@ -115,16 +116,12 @@ def fight(boss_stats,your_stats,spell_seq):
 	recharge_ticker = 0
 	your_turn = True
 	while(True):
-		if your_turn:
-			print 'Player turn'
-		else: print 'Boss turn'
-		print 'boss:',boss_hp,'you:',your_hp
-		#poison
+
 		if poison_ticker:
 			boss_hp -= 3
 			poison_ticker -= 1
 		if boss_hp <= 0:
-			return True
+			return True,mana_spent
 
 		#shield
 		if shield_ticker:
@@ -138,15 +135,21 @@ def fight(boss_stats,your_stats,spell_seq):
 			your_mana += 101
 
 		if your_turn:
+			if part2:
+				your_hp -= 1
+				if your_hp <= 0:
+					return False
+
+
 			if your_mana < minimum_mana:
 				return False
 			if current_spell == len(spell_seq):
-				raise Exception("need to increase size of spell_seq")
+				return False
 
 			spell = spell_seq[current_spell]
 			current_spell += 1
-			print 'casting',spell
 			your_mana -= spell_costs[spell]
+			mana_spent += spell_costs[spell]
 			if spell == 'Magic Missile':
 				boss_hp -= 4
 
@@ -165,7 +168,7 @@ def fight(boss_stats,your_stats,spell_seq):
 				poison_ticker = 6
 
 			if boss_hp <= 0:
-				return True
+				return True,mana_spent
 		else:
 			your_hp -= max(1,boss_dmg - your_armor)
 			if your_hp <= 0:
@@ -173,29 +176,59 @@ def fight(boss_stats,your_stats,spell_seq):
 		
 		your_turn = not your_turn
 
-		print ''
-
-
-# For example, suppose the player has 10 hit points and 250 mana,
- # and that the boss has 13 hit points and 8 damage:
-tb = {'hp':13,'damage':8}
-ty = {'hp':10,'mana':250}
-
-print fight(tb,ty,['Poison','Magic Missile'])
-
 valid_seqs = []
-seqs = itertools.product(spell_costs,repeat=8)
+length_seq = 9 # I tried different values for length_seq. This is the lowest one that returned the right answer
+seqs = itertools.product(spell_costs,repeat=length_seq)
 i = 0
-while(i < len(spell_costs) ** 8):
+
+while(i < len(spell_costs) ** length_seq):
+	seq = seqs.next()
+	skip = 0
 	for j in range(len(seq)):
 		if seq[j] == 'Poison':
 			if 'Poison' in seq[j+1:j+3]:
-				pass
-				#### TODO
-				#### Skip the spell sequences that have poison come too soon.
-				#### This is similar to what you did in a previous problem
-				#### you will have to skip based on where the second poison occurs.
+				ind = seq[j+1:j+3].index('Poison') + j + 1
+				skip = len(spell_costs) ** (length_seq - ind - 1)
+				break
+		elif seq[j] == 'Shield':
+			if 'Shield' in seq[j+1:j+3]:
+				ind = seq[j+1:j+3].index('Shield') + j + 1
+				skip = len(spell_costs) ** (length_seq - ind - 1)
+				break
+		elif seq[j] == 'Recharge':
+			if 'Recharge' in seq[j+1:j+3]:
+				ind = seq[j+1:j+3].index('Recharge') + j + 1
+				skip = len(spell_costs) ** (length_seq - ind - 1)
+				break
+	if skip:
+		i += skip
+		# start skip > 1 to not double count the current seq
+		while (skip > 1):
+			seqs.next()
+			skip -= 1
+	else:
+		valid_seqs.append(seq)
+		i+=1
+print 'number of valid sequences:' len(valid_seqs)
+min_mana_spent1 = float('inf')
+min_mana_spent2 = float('inf')
+for seq in valid_seqs:
+	res1 = fight(boss_stats,your_stats,seq,part2=False)
+	if (res1):
+		mana_spent = res1[1]
+		if mana_spent < min_mana_spent1:
+			min_mana_spent1 = mana_spent
 
+	res2 = fight(boss_stats,your_stats,seq,part2=True)
+	if (res2):
+		mana_spent = res2[1]
+		if mana_spent < min_mana_spent2:
+			min_mana_spent2 = mana_spent
+
+print 'Part I'
+print min_mana_spent1
+print 'Part II'
+print min_mana_spent2
 
 
 total_time = time.time() - start_time

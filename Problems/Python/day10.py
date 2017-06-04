@@ -30,7 +30,11 @@ def look_and_say(num):
 for i in range(0,40):
 	input_ = look_and_say(input_)
 
-print input_
+print 'Part I'
+print len(input_)
+print 'Part II'
+for i in range(0,10):
+	input_ = look_and_say(input_)
 print len(input_)
 
 

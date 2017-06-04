@@ -22,9 +22,32 @@
 import time
 start_time = time.time()
 
+input_ = (2981, 3075)
+start = 20151125
+mult = 252533
+div = 33554393
 
+def coors():
+    yield 1,1
+    yield 2,1
+    row,col= 1,2
+    while(True):
+        yield row,col
+        if row == 1:
+            row = col + 1
+            col = 1
+        else:
+            row -= 1
+            col += 1
 
-
+iterator = coors()
+print iterator.next()
+while (True):
+    row,col = iterator.next()
+    start = (start * mult) % div
+    if (row,col) == input_:
+        print start
+        break
 
 total_time = time.time() - start_time
 print "Program Execution Time:", total_time, "seconds."

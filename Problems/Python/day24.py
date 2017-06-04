@@ -20,6 +20,56 @@
 import time
 start_time = time.time()
 
+package_list = sorted([int(pkg) for pkg in open('../Input/day24.txt','r').read().split('\n')])
+package_set = set(package_list)
+tot_weight = sum(package_list)
+target_weight = tot_weight / 4
+print tot_weight, target_weight
+g1,g2,g3 = [],[],[]
+
+def qe(l):
+    prod = 1
+    for el in l:
+        prod *= el
+    return prod
+
+all_combos = []
+count_combos = 0
+def try_combo(index,total,combo):
+    global count_combos,all_combos
+    total += package_list[index]
+    combo.append(package_list[index])
+    if total == target_weight:
+        all_combos.append(combo)
+        return True
+    if total > target_weight:
+        return False
+    else:
+        for i in range(index+1,len(package_list)):
+            res = try_combo(i,total,list(combo))
+            if not res:
+                break
+        return True
+            
+
+for i in range(0,len(package_list)):
+    try_combo(i,0,[])
+
+min_qe = float('inf')
+min_combo = None
+for combo in all_combos:
+    qe_ = qe(combo)
+    if qe_ < min_qe:
+        min_qe = qe_
+        min_combo = combo
+
+f = open('saved_from_24_2.txt','w')
+for combo in all_combos:
+    f.write(str(combo) + '\n')
+
+print 'part II'
+print min_qe
+
 
 
 
