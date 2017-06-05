@@ -15,17 +15,22 @@ lights1 = set()
 lights2 = dict()
 instructions = open('../Input/day6.txt','r').read().split('\n')
 
+
 def process_instruction1(instruction):
+	c = 0
 	parts = instruction.split()
 	if parts[0] == 'toggle':
 		x1,y1 = [int(i) for i in parts[1].split(',')]
 		x2,y2 = [int(i) for i in parts[3].split(',')]
 		for x in range(x1,x2+1):
 			for y in range(y1,y2+1):
+
 				if (x,y) in lights1:
 					lights1.remove((x,y))
+					c += 1
 				else:
 					lights1.add((x,y))
+					
 
 	else:
 		x1,y1 = [int(i) for i in parts[2].split(',')]
@@ -41,6 +46,7 @@ def process_instruction1(instruction):
 					if (x,y) in lights1:
 						lights1.remove((x,y))
 
+	print c
 
 def process_instruction2(instruction):
 	parts = instruction.split()
@@ -80,16 +86,17 @@ for inst in instructions:
 
 print "Part I"
 print len(lights1)
+print c
 
-i = 0
-for inst in instructions:
-	process_instruction2(inst)
-	if (i % 20 == 0):
-		print i
-	i += 1
+# i = 0
+# for inst in instructions:
+# 	process_instruction2(inst)
+# 	if (i % 20 == 0):
+# 		print i
+# 	i += 1
 
-print "Part II"
-print sum(lights2.values())
+# print "Part II"
+# print sum(lights2.values())
 
 total_time = time.time() - start_time
 print "Program Execution Time:", total_time, "seconds."
