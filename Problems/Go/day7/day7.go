@@ -17,7 +17,13 @@ type Wire struct {
     is_val bool
 }
 
+
+var null_wire = Wire{"IGNORE","","",0,false}
 var wires = make(map[string]Wire)
+
+func value_wire(val int) Wire{
+    return Wire{"VALUE","","",val,true}
+}
 
 func process_instruction(instruction string){
     parts := strings.Split(instruction," ")
@@ -27,15 +33,56 @@ func process_instruction(instruction string){
         if err != nil {
             wires[end_wire] = Wire{parts[0],parts[1],"IGNORE",0,false}
         } else {
-            wires[end_wire] = Wire{parts[0],parts[1],"IGNORE",^val,true}
+            wires[end_wire] = Wire{parts[0],parts[1],"VALUE",^val,true}
         }
     } else if len(parts) == 3 {
-        wires[end_wire] = Wire{"SELF",parts[0],"IGNORE",0,false}
+        wires[end_wire] = Wire{"VALUE","","",parts[0],true}
     } else {
         wires[end_wire] = Wire{parts[1],parts[0],parts[2],0,false}
     }
 
 }
+
+
+
+
+func evaluate(wire_str string) int {
+    if wire_str == "IGNORE" 
+}
+
+func evaluate(wire_str string) Wire {
+    //TODO
+    if wire_str == "IGNORE" {
+        return null_wire
+    }
+    wire,in := wires[wire_str]
+    if in {
+        if wire.is_val {
+            return value_wire(wire.val)
+        } else {
+            if wire.inst == "SELF" {
+                if wire.is_val {
+                    return value_wire(wire.val)
+                } 
+            }
+            switch wire.inst {
+                case "AND": return evaluate(wire.wire_a) & evaluate(wire.wire_b)
+                case "OR" : return evaluate(wire.wire_a) | evaluate(wire.wire_b)
+                case "LSHIFT": return evaluate(wire.wire_a) << evaluate(wire.wire_b)
+                case "RSHIFT": return evaluate(wire.wire_a) >> evaluate(wire.wire_b)
+                case "NOT": return ^evaluate(wire.wire_a)
+                case "SELF": return wire.wire_a
+            }
+
+        }
+    } else {
+        panic(1)
+        return null_wire
+    }
+
+
+}
+
 
 // def evaluate(wire):
 //     if wire == "IGNORE": return None
@@ -54,10 +101,6 @@ func process_instruction(instruction string){
 //             return wires[wire]
 //     else: return int(wire)
 
-func evaluate(wire string) Wire {
-    //TODO
-    return Wire{"a","b","c",0,false}
-}
 
 func main(){
     start := time.Now()
@@ -73,7 +116,7 @@ func main(){
     sc := bufio.NewScanner(f)
     for sc.Scan() {
         line := sc.Text()
-        fmt.Println(line)
+        process_instruction(line)
 
     }
 
